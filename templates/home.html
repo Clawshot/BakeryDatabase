@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Button Alert</title>
-</head>
-<body>
-    <button id="myBtn">Click Me!</button>
+  <head>
+    <title>My First JS Page</title>
+    <link rel="stylesheet" href="calculator.css" />
+  </head>
+  <body>
+    <h1 id="h1">Reposteria Dolce Vita</h1>
 
-    <script>
-        document.getElementById("myBtn").addEventListener("click", () => {
-            alert("Button clicked!");
-        });
-    </script>
-</body>
+    <form action="/order" method="POST">
+        <button type="submit" name="product" value="Relampago">Relampago</button>
+    </form>
+    <button id="Tar">Tartaleta</button>
+    <button id="Pas">Pastelito</button>
+    <button id="Bal">Baleada</button>
+
+
+<div id="result">Result will appear here</div>
+    <script src="script.js"></script>
+  </body>
 </html>
