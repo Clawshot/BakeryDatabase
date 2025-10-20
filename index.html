@@ -29,6 +29,12 @@
     <button class="product-btn" data-id="tartaleta" data-name="Tartaleta" data-price="4.00">
       <span>Tartaleta</span><span>$4.00</span>
     </button>
+    <!-- Add inside any .products group -->
+    <button class="product-btn" data-id="cake" data-name="Custom Cake" data-price=""
+        aria-label="Customize a cake">
+      <span>Custom Cake</span><span>Customize…</span>
+    </button>
+
   </div>
 </section>
 
@@ -76,6 +82,64 @@
       </div>
     </section>
   </div>
+  <!-- Cake Customization Modal -->
+<dialog id="cakeModal">
+  <form method="dialog" id="cakeForm" class="modal-card">
+    <h3 class="modal-title">Opciones de Pasteles</h3>
+
+    <div class="modal-grid">
+      <label>
+        <span>Size</span>
+        <select id="cakeSize" required>
+          <option value='Pequeno'>Pequeno</option>
+          <option value='Mediano'>Mediano</option>
+          <option value='Cuadrado'>Cuadrado</option>
+          <option value='Grande'>Grande</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Flavor</span>
+        <select id="cakeFlavor" required>
+          <option>Vanilla</option>
+          <option>Chocolate</option>
+          <option>Red Velvet</option>
+          <option>Strawberry</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Frosting</span>
+        <select id="cakeFrosting" required>
+          <option>Vanilla</option>
+          <option>Chocolate</option>
+          <option>Cream Cheese</option>
+          <option>Buttercream</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Message (optional)</span>
+        <input id="cakeMessage" maxlength="40" placeholder="e.g., Happy Birthday Giancarlo!" />
+      </label>
+
+      <label>
+        <span>Qty</span>
+        <input id="cakeQty" type="number" min="1" value="1" required />
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-price">
+        <span id="cakePricePreview">$0.00</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="cakeCancel" class="btn-secondary">Cancel</button>
+        <button type="submit" id="cakeAdd" class="btn-primary">Add to Cart</button>
+      </div>
+    </div>
+  </form>
+</dialog>
 
   <script src="script.js"></script>
 </body>

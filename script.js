@@ -15,6 +15,37 @@ const els = {
   clearBtn: document.getElementById('clearBtn'),
 };
 
+// Pricing for cakes (you can tweak)
+const CAKE_PRICES = {
+  '6"': 20.00,
+  '8"': 30.00,
+  '10"': 45.00,
+};
+// Optional surcharges (examples)
+const MESSAGE_SURCHARGE = 0; // e.g., 2.00 if you want to charge for a message
+
+// Grab modal elements
+const cakeEls = {
+  modal: document.getElementById('cakeModal'),
+  form: document.getElementById('cakeForm'),
+  size: document.getElementById('cakeSize'),
+  flavor: document.getElementById('cakeFlavor'),
+  frosting: document.getElementById('cakeFrosting'),
+  message: document.getElementById('cakeMessage'),
+  qty: document.getElementById('cakeQty'),
+  cancel: document.getElementById('cakeCancel'),
+  pricePreview: document.getElementById('cakePricePreview'),
+};
+
+function cakeUnitPrice(opts) {
+  let base = CAKE_PRICES[opts.size] ?? 0;
+  if (opts.message && opts.message.trim().length > 0) {
+    base += MESSAGE_SURCHARGE;
+  }
+  return base;
+}
+
+
 // --- Cart ops ---
 function addItem({ id, name, price }) {
   if (!cart[id]) cart[id] = { id, name, price, qty: 0 };
@@ -105,15 +136,106 @@ function renderCart() {
   els.totalLabel.textContent = `Total: ${currency(calcTotal())}`;
 }
 
+function openCakeModal() {
+  // reset form
+  cakeEls.form.reset();
+  updateCakePreview();
+  if (typeof cakeEls.modal.showModal === 'function') {
+    cakeEls.modal.showModal();
+  } else {
+    // fallback for very old browsers
+    cakeEls.modal.setAttribute('open', 'open');
+  }
+}
+
+function closeCakeModal() {
+  if (typeof cakeEls.modal.close === 'function') {
+    cakeEls.modal.close();
+  } else {
+    cakeEls.modal.removeAttribute('open');
+  }
+}
+
+function updateCakePreview() {
+  const opts = {
+    size: cakeEls.size.value,
+    flavor: cakeEls.flavor.value,
+    frosting: cakeEls.frosting.value,
+    message: cakeEls.message.value || '',
+  };
+  const unit = cakeUnitPrice(opts);
+  const qty = Math.max(1, parseInt(cakeEls.qty.value || '1', 10));
+  cakeEls.pricePreview.textContent = `${currency(unit)} each — ${currency(unit * qty)} total`;
+}
+
+// Keep preview updated as inputs change
+['change', 'input'].forEach(ev => {
+  cakeEls.size.addEventListener(ev, updateCakePreview);
+  cakeEls.flavor.addEventListener(ev, updateCakePreview);
+  cakeEls.frosting.addEventListener(ev, updateCakePreview);
+  cakeEls.message.addEventListener(ev, updateCakePreview);
+  cakeEls.qty.addEventListener(ev, updateCakePreview);
+});
+
+// Cancel
+cakeEls.cancel.addEventListener('click', (e) => {
+  e.preventDefault();
+  closeCakeModal();
+});
+
+// Submit ("Add to Cart")
+cakeEls.form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const opts = {
+    size: cakeEls.size.value,
+    flavor: cakeEls.flavor.value,
+    frosting: cakeEls.frosting.value,
+    message: cakeEls.message.value?.trim() || '',
+  };
+  const qty = Math.max(1, parseInt(cakeEls.qty.value || '1', 10));
+  const unit = cakeUnitPrice(opts);
+
+  // Create a user-friendly name for the cart row
+  const pretty = `Cake (${opts.size}, ${opts.flavor}, ${opts.frosting}${opts.message ? `, “${opts.message}”` : ''})`;
+
+  // IMPORTANT: We want multiple custom cakes to be tracked separately.
+  // So give each custom cake a unique cart id.
+  const uniqueId = `cake-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+
+  // Add to cart as its own line item
+  cart[uniqueId] = {
+    id: uniqueId,          // unique row id in cart
+    baseId: 'cake',        // real product id for the backend
+    name: pretty,
+    price: unit,
+    qty: qty,
+    options: opts,         // carry options so we can POST them later
+  };
+
+  renderCart();
+  closeCakeModal();
+});
+
+
 // --- Wiring ---
 els.productButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.id;
+
+    if (id === 'cake') {
+      // Open modal instead of directly adding
+      openCakeModal();
+      return;
+    }
+
+    // Default behavior for regular products
     const name = btn.dataset.name;
     const price = parseFloat(btn.dataset.price);
     addItem({ id, name, price });
   });
 });
+
 
 els.clearBtn.addEventListener('click', clearCart);
 
@@ -121,9 +243,13 @@ els.buyBtn.addEventListener('click', async () => {
   const items = cartItems();
   if (items.length === 0) return;
 
-  // Only send what's needed. The server will validate price by ID.
   const payload = {
-    items: items.map(it => ({ id: it.id, qty: it.qty }))
+    items: items.map(it => {
+      const baseId = it.baseId || it.id; // 'cake' for custom cakes, or the normal id
+      const line = { id: baseId, qty: it.qty };
+      if (it.options) line.options = it.options; // include customizations
+      return line;
+    })
   };
 
   els.buyBtn.disabled = true;
@@ -151,9 +277,10 @@ els.buyBtn.addEventListener('click', async () => {
     alert(`Could not place order: ${err.message}`);
   } finally {
     els.buyBtn.textContent = 'Buy';
-    renderCart(); // this will re-enable if cart has items
+    renderCart();
   }
 });
+
 
 
 // Initial render
