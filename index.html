@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Simple Cart Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Bakery Cart (Front-End Only)</h1>
+      <p>Select items below. Your cart updates instantly. “Buy” is a placeholder for when we add the backend.</p>
+    </header>
+
+    <!-- Product buttons -->
+    <section class="card">
+      <h2 class="section-title">Products</h2>
+      <div class="products">
+        <button class="product-btn" data-id="relampago" data-name="Relámpago" data-price="3.50" aria-label="Add Relámpago for $3.50">
+          <span>Relámpago</span><span>$3.50</span>
+        </button>
+        <button class="product-btn" data-id="brownie" data-name="Brownie" data-price="2.75" aria-label="Add Brownie for $2.75">
+          <span>Brownie</span><span>$2.75</span>
+        </button>
+        <button class="product-btn" data-id="cookie" data-name="Cookie" data-price="1.25" aria-label="Add Cookie for $1.25">
+          <span>Cookie</span><span>$1.25</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Cart -->
+    <section class="card" aria-live="polite">
+      <div class="cart-header">
+        <h2 class="section-title">Cart</h2>
+      </div>
+
+      <table class="cart-table" id="cartTable" role="table" aria-label="Shopping cart">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Price</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="cartBody">
+          <tr id="emptyRow"><td colspan="5" class="muted">Cart is empty. Add something tasty 🍪</td></tr>
+        </tbody>
+      </table>
+
+      <div class="footer">
+        <div class="total" id="totalLabel">Total: $0.00</div>
+        <button class="clear-btn" id="clearBtn" type="button">Clear</button>
+        <button class="buy-btn" id="buyBtn" type="button" disabled>Buy</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
