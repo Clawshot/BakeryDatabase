@@ -14,10 +14,18 @@ app = Flask(
 
 # Simple product catalog (server is the source of truth for price)
 CATALOG = {
+    # Pastries
     "relampago": {"name": "Relámpago", "price": 3.50},
     "brownie":   {"name": "Brownie",   "price": 2.75},
     "cookie":    {"name": "Cookie",    "price": 1.25},
+    "tartaleta": {"name": "Tartaleta", "price": 4.00},
+
+    # Drinks
+    "capuchino": {"name": "Capuchino", "price": 2.50},
+    "latte":     {"name": "Latte",     "price": 3.00},
+    "espresso":  {"name": "Espresso",  "price": 2.00},
 }
+
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)

@@ -71,3 +71,21 @@ p { margin-top: 0; color: #94a3b8; }
 .clear-btn { border-color: #475569; }
 .clear-btn:hover { background: #0d1627; }
 .muted { color: #94a3b8; font-style: italic; padding: 10px 0 4px; }
+
+.section-title {
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.products {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 20px;
+}
+
+.card + .card {
+  margin-top: 20px; /* space between categories */
+}
+
