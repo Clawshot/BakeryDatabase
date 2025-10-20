@@ -30,7 +30,7 @@ CATALOG = {
 def price_for_cake(options: dict) -> float:
     """Compute a cake's unit price based on selected options."""
     # Base prices per size (tweak as you like)
-    base_prices = {'6"': 20.0, '8"': 30.0, '10"': 45.0}
+    base_prices = {'Pequeno': 200, 'Mediano': 300, 'Cuadrado': 450, 'Grande': 600}
     size = (options.get("size") or "").strip()
     price = base_prices.get(size, 0.0)
 

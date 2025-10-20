@@ -17,9 +17,10 @@ const els = {
 
 // Pricing for cakes (you can tweak)
 const CAKE_PRICES = {
-  '6"': 20.00,
-  '8"': 30.00,
-  '10"': 45.00,
+  'Pequeno': 200,
+  'Mediano': 300,
+  'Cuadrado': 450,
+  'Grande': 600,
 };
 // Optional surcharges (examples)
 const MESSAGE_SURCHARGE = 0; // e.g., 2.00 if you want to charge for a message
@@ -165,7 +166,7 @@ function updateCakePreview() {
   };
   const unit = cakeUnitPrice(opts);
   const qty = Math.max(1, parseInt(cakeEls.qty.value || '1', 10));
-  cakeEls.pricePreview.textContent = `${currency(unit)} each — ${currency(unit * qty)} total`;
+  cakeEls.pricePreview.textContent = `${currency(unit * qty)} total`;
 }
 
 // Keep preview updated as inputs change
