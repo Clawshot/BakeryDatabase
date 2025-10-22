@@ -22,8 +22,7 @@ const CAKE_PRICES = {
   'Cuadrado': 450,
   'Grande': 600,
 };
-// Optional surcharges (examples)
-const MESSAGE_SURCHARGE = 0; // e.g., 2.00 if you want to charge for a message
+
 
 // Grab modal elements
 const cakeEls = {
@@ -270,7 +269,7 @@ els.buyBtn.addEventListener('click', async () => {
 
     const data = await res.json();
     alert(
-      `Order placed ✅\nOrder #${data.order_id}\nTotal: $${data.total.toFixed(2)}`
+      `Order placed \nOrder #${data.order_id}\nTotal: $${data.total.toFixed(2)}`
     );
     clearCart();
   } catch (err) {

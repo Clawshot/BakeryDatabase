@@ -13,19 +13,8 @@ app = Flask(
 )
 
 # Simple product catalog (server is the source of truth for price)
-CATALOG = {
-    # Pastries
-    "relampago": {"name": "Relámpago", "price": 3.50},
-    "brownie":   {"name": "Brownie",   "price": 2.75},
-    "cookie":    {"name": "Cookie",    "price": 1.25},
-    "tartaleta": {"name": "Tartaleta", "price": 4.00},
-
-    # Drinks
-    "capuchino": {"name": "Capuchino", "price": 2.50},
-    "latte":     {"name": "Latte",     "price": 3.00},
-    "espresso":  {"name": "Espresso",  "price": 2.00},
-    "cake": {"name": "Custom Cake", "price": None},  # price computed from options
-}
+with open('catalog.json', 'r', encoding='utf-8') as f:
+    CATALOG = json.load(f)
 
 def price_for_cake(options: dict) -> float:
     """Compute a cake's unit price based on selected options."""
@@ -42,7 +31,6 @@ def price_for_cake(options: dict) -> float:
     return round(price, 2)
 
 def cake_label(options: dict) -> str:
-    """Human-friendly label for the DB 'Contenido' field."""
     size = options.get("size", "?")
     flavor = options.get("flavor", "?")
     frosting = options.get("frosting", "?")
@@ -78,6 +66,10 @@ def init_db():
 def index():
     # Serve the front-end
     return send_from_directory(app.static_folder, "index.html")
+
+@app.get("/about")
+def about():
+    return send_from_directory(app.static_folder, "about.html")
 
 @app.post("/api/buy")
 def api_buy():
@@ -122,7 +114,7 @@ def api_buy():
             options = entry.get("options") or {}
             unit_price = price_for_cake(options)
             name = CATALOG["cake"]["name"]  # "Custom Cake"
-            label = cake_label(options)     # human-friendly label for DB
+            label = cake_label(options)     
         else:
             if pid not in CATALOG:
                 return jsonify({"ok": False, "error": f"Invalid item id: {pid}"}), 400

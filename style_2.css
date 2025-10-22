@@ -1,0 +1,25 @@
+:root { --gap: 12px; --radius: 14px; }
+* { box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  margin: 0; padding: 24px;
+  background: #0f172a; color: #e2e8f0;
+}
+h1 { margin: 0 0 4px; font-size: 1.6rem; }
+p { margin-top: 0; color: #94a3b8; }
+
+
+.wrap {
+  max-width: 900px; margin: 0 auto; display: grid; gap: var(--gap);
+  grid-template-columns: 1fr;
+}
+
+
+.product-btn {
+  width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #334155;
+  background: #0b1220; color: #e2e8f0; cursor: pointer; font-weight: 600;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: transform .05s ease, background .2s ease, border .2s ease;
+}
+.product-btn:hover { background: #0d1627; border-color: #3b82f6; }
+.product-btn:active { transform: translateY(1px); }
