@@ -16,19 +16,35 @@ app = Flask(
 with open('catalog.json', 'r', encoding='utf-8') as f:
     CATALOG = json.load(f)
 
-def price_for_cake(options: dict) -> float:
-    """Compute a cake's unit price based on selected options."""
-    # Base prices per size (tweak as you like)
-    base_prices = {'Pequeno': 200, 'Mediano': 300, 'Cuadrado': 450, 'Grande': 600}
-    size = (options.get("size") or "").strip()
-    price = base_prices.get(size, 0.0)
+CAKE_PRICES = {
+  "Vainilla":   { 'Pequeno': 300, 'Mediano': 430, 'Cuadrado': 590, 'Grande': 770 },
+  "Chocolate": { 'Pequeno': 370, 'Mediano': 510, 'Cuadrado': 690, 'Grande': 900 },
+  "Fruta":{ 'Pequeno': 390, 'Mediano': 570, 'Cuadrado': 750, 'Grande': 900 },
+  "Mantequilla":{ 'Pequeno': 18.00, 'Mediano': 530, 'Cuadrado': 720, 'Grande': 55.00 },
+  "Tres Leches":{ 'Pequeno': 0, 'Mediano': 200, 'Cuadrado': 0, 'Grande': 480 },
+}
 
-    # Optional surcharges
+MESSAGE_SURCHARGE = 0.00
+
+def price_for_cake(options: dict) -> float:
+    flavor = (options.get("flavor") or "").strip()
+    size = (options.get("size") or "").strip()
+
+    flavor_table = CAKE_PRICES.get(flavor)
+    if not flavor_table:
+        return 0.0
+    base = float(flavor_table.get(size, 0.0))
+
     message = (options.get("message") or "").strip()
     if message:
-        price += 0.0  # e.g., add 2.0 if you want to charge for a custom message
+        base += MESSAGE_SURCHARGE
 
-    return round(price, 2)
+    # frosting = (options.get("frosting") or "").strip()
+    # if frosting in FROSTING_SURCHARGE:
+    #     base += FROSTING_SURCHARGE[frosting]
+
+    return round(base, 2)
+
 
 def cake_label(options: dict) -> str:
     size = options.get("size", "?")
@@ -113,8 +129,9 @@ def api_buy():
         if pid == "cake":
             options = entry.get("options") or {}
             unit_price = price_for_cake(options)
-            name = CATALOG["cake"]["name"]  # "Custom Cake"
-            label = cake_label(options)     
+            name = "Custom Cake"
+            # (build your label / simplified Contenido as you prefer)
+   
         else:
             if pid not in CATALOG:
                 return jsonify({"ok": False, "error": f"Invalid item id: {pid}"}), 400

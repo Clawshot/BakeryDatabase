@@ -29,11 +29,7 @@
     <button class="product-btn" data-id="tartaleta" data-name="Tartaleta" data-price="4.00">
       <span>Tartaleta</span><span>$4.00</span>
     </button>
-    <!-- Add inside any .products group -->
-    <button class="product-btn" data-id="cake" data-name="Custom Cake" data-price=""
-        aria-label="Customize a cake">
-      <span>Custom Cake</span><span>Customize…</span>
-    </button>
+    
 
   </div>
 </section>
@@ -49,6 +45,53 @@
     </button>
     <button class="product-btn" data-id="espresso" data-name="Espresso" data-price="2.00">
       <span>Espresso</span><span>$2.00</span>
+    </button>
+  </div>
+</section>
+
+
+<section class="card">
+  <h2 class="section-title">Cakes 🎂</h2>
+  <div class="products">
+    <!-- Each button is a cake with a fixed flavor -->
+    <button class="product-btn"
+            data-id="cake"
+            data-name="Custom Cake"
+            data-flavor="Vainilla"
+            aria-label="Customize Vanilla cake size">
+      <span>Vainilla</span>
+    </button>
+
+    <button class="product-btn"
+            data-id="cake"
+            data-name="Custom Cake"
+            data-flavor="Chocolate"
+            aria-label="Customize Chocolate cake size">
+      <span>Chocolate</span>
+    </button>
+
+    <button class="product-btn"
+            data-id="cake"
+            data-name="Custom Cake"
+            data-flavor="Tres Leches"
+            aria-label="Customize Red Velvet cake size">
+      <span>Tres Leches</span>
+    </button>
+
+    <button class="product-btn"
+            data-id="cake"
+            data-name="Custom Cake"
+            data-flavor="Fruta"
+            aria-label="Customize Strawberry cake size">
+      <span>Fruta</span>
+    </button>
+
+    <button class="product-btn"
+            data-id="cake"
+            data-name="Custom Cake"
+            data-flavor="Mantequilla"
+            aria-label="Customize Strawberry cake size">
+      <span>Mantequilla</span>
     </button>
   </div>
 </section>
@@ -71,7 +114,7 @@
           </tr>
         </thead>
         <tbody id="cartBody">
-          <tr id="emptyRow"><td colspan="5" class="muted">Cart is empty. Add something tasty 🍪</td></tr>
+          <tr id="emptyRow"><td colspan="5" class="muted">Carrito Vacio</td></tr>
         </tbody>
       </table>
 
@@ -103,17 +146,21 @@
         </select>
       </label>
 
-      <label>
-        <span>Flavor</span>
-        <select id="cakeFlavor" required>
-          <option>Vanilla</option>
-          <option>Chocolate</option>
-          <option>Red Velvet</option>
-          <option>Strawberry</option>
-        </select>
-      </label>
+      <!-- keep in the form but hidden so JS can still set/read it -->
+    <label style="display:none">
+  <span>Flavor</span>
+  <select id="cakeFlavor">
+    <option>Vainilla</option>
+    <option>Chocolate</option>
+    <option>Tres Leches</option>
+    <option>Fruta</option>
+    <option>Mantequilla</option>
+  </select>
+</label>
 
-      <label>
+
+
+      <label style="display: none">
         <span>Frosting</span>
         <select id="cakeFrosting" required>
           <option>Vanilla</option>
@@ -123,7 +170,7 @@
         </select>
       </label>
 
-      <label>
+      <label style="display: none">
         <span>Message (optional)</span>
         <input id="cakeMessage" maxlength="40" placeholder="e.g., Happy Birthday Giancarlo!" />
       </label>

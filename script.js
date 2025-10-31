@@ -17,10 +17,11 @@ const els = {
 
 // Pricing for cakes (you can tweak)
 const CAKE_PRICES = {
-  'Pequeno': 200,
-  'Mediano': 300,
-  'Cuadrado': 450,
-  'Grande': 600,
+  "Vainilla":   { 'Pequeno': 300, 'Mediano': 430, 'Cuadrado': 590, 'Grande': 770 },
+  "Chocolate": { 'Pequeno': 370, 'Mediano': 510, 'Cuadrado': 690, 'Grande': 900 },
+  "Fruta":{ 'Pequeno': 390, 'Mediano': 570, 'Cuadrado': 750, 'Grande': 900 },
+  "Mantequilla":{ 'Pequeno': 18.00, 'Mediano': 530, 'Cuadrado': 720, 'Grande': 55.00 },
+  "Tres Leches":{ 'Pequeno': 0, 'Mediano': 200, 'Cuadrado': 0, 'Grande': 480 },
 };
 
 
@@ -38,12 +39,17 @@ const cakeEls = {
 };
 
 function cakeUnitPrice(opts) {
-  let base = CAKE_PRICES[opts.size] ?? 0;
-  if (opts.message && opts.message.trim().length > 0) {
-    base += MESSAGE_SURCHARGE;
-  }
+  const flavorTable = CAKE_PRICES[opts.flavor];
+  if (!flavorTable) return 0;
+
+  let base = flavorTable[opts.size] ?? 0;
+
+  if (opts.message) base += MESSAGE_SURCHARGE;
+  // if (FROSTING_SURCHARGE?.[opts.frosting]) base += FROSTING_SURCHARGE[opts.frosting];
+
   return base;
 }
+
 
 
 // --- Cart ops ---
@@ -136,14 +142,22 @@ function renderCart() {
   els.totalLabel.textContent = `Total: ${currency(calcTotal())}`;
 }
 
-function openCakeModal() {
-  // reset form
+function openCakeModal(prefill = {}) {
+  // reset first
   cakeEls.form.reset();
+
+  // lock in the flavor coming from the clicked button
+  if (prefill.flavor) {
+    cakeEls.flavor.value = prefill.flavor;
+  }
+
+  // If you want to make flavor truly immutable, disable it (even though it's hidden)
+  cakeEls.flavor.disabled = true;
+
   updateCakePreview();
   if (typeof cakeEls.modal.showModal === 'function') {
     cakeEls.modal.showModal();
   } else {
-    // fallback for very old browsers
     cakeEls.modal.setAttribute('open', 'open');
   }
 }
@@ -155,6 +169,22 @@ function closeCakeModal() {
     cakeEls.modal.removeAttribute('open');
   }
 }
+
+
+function updateCakePreview() {
+  const opts = {
+    size: cakeEls.size.value,
+    flavor: cakeEls.flavor.value,   // preselected when opening modal
+    frosting: cakeEls.frosting?.value || '',
+    message: cakeEls.message?.value || '',
+  };
+  const unit = cakeUnitPrice(opts);
+  const qty = Math.max(1, parseInt(cakeEls.qty.value || '1', 10));
+  cakeEls.pricePreview.textContent = `${currency(unit)} each — ${currency(unit * qty)} total`;
+}
+
+
+
 
 function updateCakePreview() {
   const opts = {
@@ -189,28 +219,26 @@ cakeEls.form.addEventListener('submit', (e) => {
 
   const opts = {
     size: cakeEls.size.value,
-    flavor: cakeEls.flavor.value,
-    frosting: cakeEls.frosting.value,
-    message: cakeEls.message.value?.trim() || '',
+    flavor: cakeEls.flavor.value,         // locked from the button
+    frosting: cakeEls.frosting?.value || '',
+    message: (cakeEls.message?.value || '').trim(),
   };
   const qty = Math.max(1, parseInt(cakeEls.qty.value || '1', 10));
   const unit = cakeUnitPrice(opts);
 
-  // Create a user-friendly name for the cart row
-  const pretty = `Cake (${opts.size}, ${opts.flavor}, ${opts.frosting}${opts.message ? `, “${opts.message}”` : ''})`;
+  const pretty = `Cake (${opts.size}, ${opts.flavor}${
+    opts.frosting ? `, ${opts.frosting}` : ''
+  }${opts.message ? `, “${opts.message}”` : ''})`;
 
-  // IMPORTANT: We want multiple custom cakes to be tracked separately.
-  // So give each custom cake a unique cart id.
   const uniqueId = `cake-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 
-  // Add to cart as its own line item
   cart[uniqueId] = {
-    id: uniqueId,          // unique row id in cart
-    baseId: 'cake',        // real product id for the backend
+    id: uniqueId,
+    baseId: 'cake',
     name: pretty,
     price: unit,
-    qty: qty,
-    options: opts,         // carry options so we can POST them later
+    qty,
+    options: opts,
   };
 
   renderCart();
@@ -218,23 +246,25 @@ cakeEls.form.addEventListener('submit', (e) => {
 });
 
 
-// --- Wiring ---
+
 els.productButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.id;
 
-    if (id === 'cake') {
-      // Open modal instead of directly adding
-      openCakeModal();
+    // If it's a cake flavor button, open modal with that flavor pre-selected
+    if (id === 'cake' && btn.dataset.flavor) {
+      const flavor = btn.dataset.flavor; // e.g., "Vanilla"
+      openCakeModal({ flavor });
       return;
     }
 
-    // Default behavior for regular products
+    // Regular products (non-cake)
     const name = btn.dataset.name;
     const price = parseFloat(btn.dataset.price);
     addItem({ id, name, price });
   });
 });
+
 
 
 els.clearBtn.addEventListener('click', clearCart);
